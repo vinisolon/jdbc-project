@@ -1,7 +1,12 @@
 package principal;
 
+import db.DB;
+
+import java.sql.Connection;
+
 public class Programa {
     public static void main(String[] args) {
-        System.out.println("Finalmente!");
+        Connection conn = DB.getConnection();
+        DB.closeConnection();
     }
 }
