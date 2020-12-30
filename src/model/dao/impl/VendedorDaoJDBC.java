@@ -118,8 +118,8 @@ public class VendedorDaoJDBC implements VendedorDao {
             rs = stm.executeQuery();
 
             if(rs.next()) {
-                Departamento departamento = instanciaDepartment(rs);
-                Vendedor vendedor = instanciaSeller(rs, departamento);
+                Departamento departamento = instanciaDepartamento(rs);
+                Vendedor vendedor = instanciaVendedor(rs, departamento);
                 return vendedor;
             }
         } catch (Exception e) {
@@ -133,7 +133,6 @@ public class VendedorDaoJDBC implements VendedorDao {
 
     @Override
     public List<Vendedor> findAll() {
-        List<Vendedor> list = new ArrayList<>();
         Statement stm = null;
         ResultSet rs = null;
 
@@ -142,13 +141,15 @@ public class VendedorDaoJDBC implements VendedorDao {
             stm = connection.createStatement();
             rs = stm.executeQuery(sql);
 
+            List<Vendedor> todosVendedores = new ArrayList<>();
+
             while(rs.next()) {
-                Departamento departamento = instanciaDepartment(rs);
-                Vendedor vendedor = instanciaSeller(rs, departamento);
-                list.add(vendedor);
+                Departamento departamento = instanciaDepartamento(rs);
+                Vendedor vendedor = instanciaVendedor(rs, departamento);
+                todosVendedores.add(vendedor);
             }
-            if(!list.isEmpty()){
-                return list;
+            if(todosVendedores.isEmpty() == false){
+                return todosVendedores;
             }
         } catch (Exception e) {
             throw new DbException(e.getMessage());
@@ -167,23 +168,24 @@ public class VendedorDaoJDBC implements VendedorDao {
         try {
             StringBuilder sql = new StringBuilder("SELECT v.*, d.nome FROM vendedor v")
                     .append(" JOIN departamento d ON v.idDepartamento = d.id")
-                    .append(" WHERE v.idDepartamento = ? ORDER BY v.name");
+                    .append(" WHERE v.idDepartamento = ? ORDER BY v.nome");
 
             stm = connection.prepareStatement(sql.toString());
             stm.setInt(1, departmentId);
             rs = stm.executeQuery();
-            List<Vendedor> vendedors = new ArrayList<>();
+
+            List<Vendedor> vendedoresDoDepartamento = new ArrayList<>();
             Departamento departamento = null;
 
             while(rs.next()) {
                 if(departamento == null){
-                    departamento = instanciaDepartment(rs);
+                    departamento = instanciaDepartamento(rs);
                 }
-                vendedors.add(instanciaSeller(rs, departamento));
+                vendedoresDoDepartamento.add(instanciaVendedor(rs, departamento));
             }
 
-            if(vendedors.isEmpty() == false){
-                return vendedors;
+            if(vendedoresDoDepartamento.isEmpty() == false){
+                return vendedoresDoDepartamento;
             } else {
                 System.out.println("Nenhum vendedor nesse departamento ou departamento não existe");
             }
@@ -197,14 +199,14 @@ public class VendedorDaoJDBC implements VendedorDao {
         return null;
     }
 
-    private Departamento instanciaDepartment(ResultSet rs) throws SQLException {
+    private Departamento instanciaDepartamento(ResultSet rs) throws SQLException {
         Departamento departamento = new Departamento();
         departamento.setId(rs.getInt("v.idDepartamento"));
         departamento.setNome(rs.getString("d.nome"));
         return departamento;
     }
 
-    private Vendedor instanciaSeller(ResultSet rs, Departamento departamento) throws SQLException {
+    private Vendedor instanciaVendedor(ResultSet rs, Departamento departamento) throws SQLException {
         Vendedor vendedor = new Vendedor();
         vendedor.setId(rs.getInt("v.id"));
         vendedor.setNome(rs.getString("v.nome"));

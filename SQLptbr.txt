@@ -1,3 +1,6 @@
+CREATE DATABASE coursejdbc;
+USE coursejdbc;
+
 CREATE TABLE departamento (
   id int(11) NOT NULL AUTO_INCREMENT,
   nome varchar(60) DEFAULT NULL,
@@ -8,7 +11,7 @@ CREATE TABLE vendedor (
   id int(11) NOT NULL AUTO_INCREMENT,
   nome varchar(60) NOT NULL,
   email varchar(100) NOT NULL,
-  dataNascimento datetime NOT NULL,
+  dataNascimento date NOT NULL,
   salario double NOT NULL,
   idDepartamento int(11) NOT NULL,
   PRIMARY KEY (id),
