@@ -1,14 +1,14 @@
 package model.dao;
 
 import db.DB;
-import model.dao.impl.DepartmentDaoJDBC;
-import model.dao.impl.SellerDaoJDBC;
+import model.dao.impl.DepartamentoDaoJDBC;
+import model.dao.impl.VendedorDaoJDBC;
 
 public class DaoFactory {
-    public static SellerDao createSellerDao(){
-        return new SellerDaoJDBC(DB.getConnection());
+    public static VendedorDao createVendedorDao(){
+        return new VendedorDaoJDBC(DB.getConnection());
     }
-    public static DepartmentDao createDepartmentDao(){
-        return new DepartmentDaoJDBC();
+    public static DepartamentoDao createDepartamentoDao(){
+        return new DepartamentoDaoJDBC();
     }
 }

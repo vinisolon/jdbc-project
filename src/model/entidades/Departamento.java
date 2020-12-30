@@ -2,21 +2,21 @@ package model.entidades;
 
 import java.io.Serializable;
 
-public class Department implements Serializable {
+public class Departamento implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-    private String name;
+    private String nome;
 
-    public Department(){}
+    public Departamento(){}
 
-    public Department(Integer id, String name) {
+    public Departamento(Integer id, String nome) {
         this.id = id;
-        this.name = name;
+        this.nome = nome;
     }
 
-    public Department(Integer id) {
+    public Departamento(Integer id) {
         this.id = id;
     }
 
@@ -28,21 +28,21 @@ public class Department implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     @Override
     public String toString() {
-        StringBuilder printDepartment = new StringBuilder()
+        StringBuilder printaDepartamento = new StringBuilder()
                 .append("ID: ")
                 .append(id)
                 .append(" | Nome: ")
-                .append(name);
-        return printDepartment.toString();
+                .append(nome);
+        return printaDepartamento.toString();
     }
 }
