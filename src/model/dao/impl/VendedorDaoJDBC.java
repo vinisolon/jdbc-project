@@ -8,7 +8,9 @@ import model.entidades.Vendedor;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VendedorDaoJDBC implements VendedorDao {
 
@@ -21,14 +23,12 @@ public class VendedorDaoJDBC implements VendedorDao {
     @Override
     public void insert(Vendedor vendedor) {
         PreparedStatement stm = null;
-
         try {
             StringBuilder sql = new StringBuilder()
                     .append("INSERT INTO vendedor (nome, email, dataNascimento, salario, idDepartamento)")
                     .append(" VALUES (?, ?, ?, ?, ?)");
 
             stm = connection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
-
             stm.setString(1, vendedor.getNome());
             stm.setString(2, vendedor.getEmail());
             stm.setDate(3, new java.sql.Date(vendedor.getDataNascimento().getTime()));
@@ -58,23 +58,20 @@ public class VendedorDaoJDBC implements VendedorDao {
     @Override
     public void update(Vendedor vendedor) {
         PreparedStatement stm = null;
-
         try {
-            String sql = "UPDATE vendedor SET nome = ?, email = ?, dataNascimento = ?, salario = ? WHERE id = ?";
-
+            String sql = "UPDATE vendedor SET nome = ?, email = ?, dataNascimento = ?, salario = ?, idDepartamento = ? WHERE id = ?";
             stm = connection.prepareStatement(sql);
             stm.setString(1, vendedor.getNome());
             stm.setString(2, vendedor.getEmail());
             stm.setDate(3, new java.sql.Date(vendedor.getDataNascimento().getTime()));
             stm.setDouble(4, vendedor.getSalario());
-            stm.setInt(5, vendedor.getId());
+            stm.setInt(5, vendedor.getDepartment().getId());
+            stm.setInt(6, vendedor.getId());
 
-            int rowsAffected = stm.executeUpdate();
+            int linhasAfetadas = stm.executeUpdate();
 
-            if(rowsAffected > 0){
+            if (linhasAfetadas > 0){
                 System.out.println("Sucesso ao atualizar dados do vendedor!");
-            } else {
-                System.out.println("Falha ao atualizar dados do vendedor!");
             }
         } catch (Exception e) {
             throw new DbException(e.getMessage());
@@ -86,24 +83,19 @@ public class VendedorDaoJDBC implements VendedorDao {
     @Override
     public void deleteById(Integer id) {
         PreparedStatement stm = null;
-
         try {
-            if(findById(id) != null) {
-                String sql = "DELETE FROM vendedor WHERE id = ?";
-                stm = connection.prepareStatement(sql);
-                stm.setInt(1, id);
+            String sql = "DELETE FROM vendedor WHERE id = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, id);
 
-                int rowsAffected = stm.executeUpdate();
+            int rowsAffected = stm.executeUpdate();
 
-                if (rowsAffected > 0) {
-                    System.out.println("Sucesso ao deletar vendedor!");
-                } else {
-                    System.out.println("Falha ao deletar vendedor!");
-                }
+            if (rowsAffected > 0) {
+                System.out.println("Sucesso ao deletar vendedor!");
             } else {
-                System.out.println("ID não encontrado!");
+                System.out.println("ID do Vendedor não existe!");
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DbException(e.getMessage());
         } finally {
             DB.closeStatement(stm);
@@ -128,6 +120,8 @@ public class VendedorDaoJDBC implements VendedorDao {
                 Departamento departamento = instanciaDepartamento(rs);
                 Vendedor vendedor = instanciaVendedor(rs, departamento);
                 return vendedor;
+            } else {
+                System.out.println("Vendedor não encontrado!");
             }
         } catch (Exception e) {
             throw new DbException(e.getMessage());
@@ -140,31 +134,35 @@ public class VendedorDaoJDBC implements VendedorDao {
 
     @Override
     public List<Vendedor> findAll() {
-        Statement stm = null;
+        PreparedStatement stm = null;
         ResultSet rs = null;
-
         try {
             String sql = "SELECT v.*, d.nome FROM vendedor v JOIN departamento d ON v.idDepartamento = d.id ORDER BY v.id";
-            stm = connection.createStatement();
-            rs = stm.executeQuery(sql);
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
 
             List<Vendedor> todosVendedores = new ArrayList<>();
+            Map<Integer, Departamento> controleRepeticaoDepartamentos = new HashMap<>();
 
             while(rs.next()) {
-                Departamento departamento = instanciaDepartamento(rs);
+                int idDepartamento = rs.getInt("idDepartamento");
+                Departamento departamento = controleRepeticaoDepartamentos.get(idDepartamento);
+                if(departamento == null) {
+                    departamento = instanciaDepartamento(rs);
+                    controleRepeticaoDepartamentos.put(idDepartamento, departamento);
+                }
                 Vendedor vendedor = instanciaVendedor(rs, departamento);
                 todosVendedores.add(vendedor);
             }
-            if(todosVendedores.isEmpty() == false){
-                return todosVendedores;
-            }
+
+            return todosVendedores;
+
         } catch (Exception e) {
             throw new DbException(e.getMessage());
         } finally {
             DB.closeStatement(stm);
             DB.closeResultSet(rs);
         }
-        return null;
     }
 
     @Override
