@@ -72,8 +72,10 @@ public class VendedorDaoJDBC implements VendedorDao {
 
             if (linhasAfetadas > 0){
                 System.out.println("Sucesso ao atualizar dados do vendedor!");
+            } else {
+                System.out.println("Nenhuma linha foi afetada!");
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DbException(e.getMessage());
         } finally {
             DB.closeStatement(stm);
@@ -93,7 +95,7 @@ public class VendedorDaoJDBC implements VendedorDao {
             if (rowsAffected > 0) {
                 System.out.println("Sucesso ao deletar vendedor!");
             } else {
-                System.out.println("ID do Vendedor não existe!");
+                System.out.println("Vendedor não encontrado!");
             }
         } catch (SQLException e) {
             throw new DbException(e.getMessage());
@@ -123,7 +125,7 @@ public class VendedorDaoJDBC implements VendedorDao {
             } else {
                 System.out.println("Vendedor não encontrado!");
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DbException(e.getMessage());
         } finally {
             DB.closeStatement(stm);
@@ -157,7 +159,7 @@ public class VendedorDaoJDBC implements VendedorDao {
 
             return todosVendedores;
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DbException(e.getMessage());
         } finally {
             DB.closeStatement(stm);
@@ -195,7 +197,7 @@ public class VendedorDaoJDBC implements VendedorDao {
                 System.out.println("Nenhum vendedor nesse departamento ou departamento não existe");
             }
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DbException(e.getMessage());
         } finally {
             DB.closeStatement(stm);
