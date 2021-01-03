@@ -19,8 +19,8 @@ CREATE TABLE vendedor (
 );
 
 INSERT INTO departamento (nome) VALUES 
-  ('TI'),
-  ('Eletronicos'),
+  ('Móveis'),
+  ('Eletrônicos'),
   ('Moda'),
   ('Livraria');
 

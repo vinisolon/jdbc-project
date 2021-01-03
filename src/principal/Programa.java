@@ -13,26 +13,29 @@ public class Programa {
 
         VendedorDao vendedorDao = DaoFactory.createVendedorDao();
 
-        Vendedor vendedorParaInsert =
-                new Vendedor(6,"Vinicius Solon", "vini@email.com", "13/12/1997", 3000.0, new Departamento(1));
+        System.out.println("INSERT VENDEDOR");
+        Vendedor vendedorParaInsert = new Vendedor(
+                null,"Vinicius Solon", "vini@email.com", "13/12/1997", 3000.0, new Departamento(1)
+        );
+        vendedorDao.insert(vendedorParaInsert);
+/*
+        System.out.println("\nDELETE BY ID");
+        vendedorDao.deleteById(6);
 
-        //vendedorDao.insert(vendedorParaInsert);
-        //vendedorDao.deleteById(12);
-        //vendedorDao.update(vendedorParaInsert);
+        System.out.println("\nUPDATE VENDEDOR");
+        vendedorDao.update(vendedorParaInsert);
 
-        /*
-        System.out.println("BY ID");
+        System.out.println("\nLISTA VENDEDORES BY ID");
         Vendedor vendedorById = vendedorDao.findById(6);
         System.out.println(vendedorById);
 
-        System.out.println("BY DEPARTAMENTO");
+        System.out.println("\nLISTA VENDEDORES BY DEPARTAMENTO");
         List<Vendedor> vendedoresByDepartamentoId = vendedorDao.findByDepartmentId(1);
         vendedoresByDepartamentoId.forEach(System.out::println);
 
-        System.out.println("ALL");
+        System.out.println("\nLISTA TODOS OS VENDEDORES");
         List<Vendedor> vendedoresRegistradosNoBanco = vendedorDao.findAll();
         vendedoresRegistradosNoBanco.forEach(System.out::println);
-         */
-
+*/
     }
 }

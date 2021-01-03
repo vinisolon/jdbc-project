@@ -29,15 +29,6 @@ public class Vendedor implements Serializable {
         this.departamento = departamento;
     }
 
-    //Sem ID
-    public Vendedor(String nome, String email, String dataNascimento, Double salario, Departamento departamento) throws ParseException {
-        this.nome = nome;
-        this.email = email;
-        this.dataNascimento = new SimpleDateFormat("dd/MM/yyyy").parse(dataNascimento);
-        this.salario = salario;
-        this.departamento = departamento;
-    }
-
     public Integer getId() {
         return id;
     }

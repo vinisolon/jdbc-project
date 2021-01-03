@@ -27,21 +27,28 @@ public class VendedorDaoJDBC implements VendedorDao {
                     .append("INSERT INTO vendedor (nome, email, dataNascimento, salario, idDepartamento)")
                     .append(" VALUES (?, ?, ?, ?, ?)");
 
-            stm = connection.prepareStatement(sql.toString());
+            stm = connection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
+
             stm.setString(1, vendedor.getNome());
             stm.setString(2, vendedor.getEmail());
             stm.setDate(3, new java.sql.Date(vendedor.getDataNascimento().getTime()));
             stm.setDouble(4, vendedor.getSalario());
             stm.setInt(5, vendedor.getDepartment().getId());
 
-            int rowsAffected = stm.executeUpdate();
+            int linhasAfetadas = stm.executeUpdate();
 
-            if(rowsAffected > 0) {
-                System.out.println("Sucesso ao inserir vendedor!");
+            if (linhasAfetadas > 0) {
+                ResultSet rs = stm.getGeneratedKeys();
+                if (rs.next()) {
+                    int idGeradoAoInserir = rs.getInt(1);
+                    vendedor.setId(idGeradoAoInserir);
+                    DB.closeResultSet(rs);
+                }
+                System.out.println("Sucesso ao inserir vendedor! ID: " + vendedor.getId());
             } else {
-                System.out.println("Falha ao inserir vendedor!");
+                throw new DbException("Erro inesperado! Nenhuma linha foi afetada!");
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DbException(e.getMessage());
         } finally {
             DB.closeStatement(stm);
